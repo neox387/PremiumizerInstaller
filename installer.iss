@@ -1,6 +1,6 @@
 #include <.\idp\idp.iss>
 
-#define PremiumizerInstallerVersion "v0.1"
+#define PremiumizerInstallerVersion "v0.2"
 
 #define AppId "{{9D9946EA-5EDE-462C-A42A-9A511E26CE7B}"
 #define AppName "Premiumizer"
@@ -12,9 +12,9 @@
 #define ServiceStartIcon "{group}\Start " + AppName + " Service"
 #define ServiceStopIcon "{group}\Stop " + AppName + " Service"
 
-#define InstallerVersion 1000
+#define InstallerVersion 1001
 #define InstallerSeedUrl "https://raw.github.com/neox387/PremiumizerInstaller/master/seed.ini"
-#define AppRepoUrl "-b dev https://github.com/neox387/premiumizer.git"
+#define AppRepoUrl "https://github.com/piejanssens/premiumizer.git"
 #define nzbtomediaRepoUrl "https://github.com/clinton-hall/nzbToMedia.git"
 
 
@@ -53,8 +53,8 @@ Source: "utils\nssm32.exe"; DestDir: "{app}\Installer"; DestName: "nssm.exe"; Ch
 Source: "utils\nssm64.exe"; DestDir: "{app}\Installer"; DestName: "nssm.exe"; Check: Is64BitInstallMode
 
 [Icons]
-Name: "{group}\{#AppName}"; Filename: "http://localhost:5000/"; IconFilename: "{app}\Installer\prem.ico"
-Name: "{commondesktop}\{#AppName}"; Filename: "http://localhost:5000/"; IconFilename: "{app}\Installer\prem.ico"; Tasks: desktopicon
+Name: "{group}\{#AppName}"; Filename: "http://127.0.0.1:5000/"; IconFilename: "{app}\Installer\prem.ico"
+Name: "{commondesktop}\{#AppName}"; Filename: "http://127.0.0.1:5000/"; IconFilename: "{app}\Installer\prem.ico"; Tasks: desktopicon
 Name: "{group}\{#AppName} on GitHub"; Filename: "{#AppRepoUrl}"; IconFilename: "{app}\Installer\github.ico"; Flags: excludefromshowinnewinstall
 Name: "{#ServiceStartIcon}"; Filename: "{app}\Installer\nssm.exe"; Parameters: "start ""{#AppServiceName}"""; Flags: excludefromshowinnewinstall
 Name: "{#ServiceStopIcon}"; Filename: "{app}\Installer\nssm.exe"; Parameters: "stop ""{#AppServiceName}"""; Flags: excludefromshowinnewinstall
@@ -68,8 +68,8 @@ Filename: "{app}\Python\Scripts\easy_install.exe"; Parameters: "{tmp}\pywin32-22
 Filename: "{app}\Python\Scripts\pip2.7.exe"; Parameters: "install -r {app}\{#AppName}\requirements.txt"; StatusMsg: "Installing Premiumizer dependencies"
 Filename: "{app}\Installer\nssm.exe"; Parameters: "start ""{#AppServiceName}"""; Flags: runhidden; BeforeInstall: CreateService; StatusMsg: "Starting {#AppName} service..."
 Filename: "{sys}\services.msc"; WorkingDir: {sys}; Flags: shellexec postinstall; Description: "Open Services.msc to change user log on for Premiumizer to your account"
-Filename: "{app}\{#AppName}\nzbtomedia\autoProcessMedia.cfg.spec"; Flags: postinstall shellexec; Description: "Open NzbToMedia config file"
-Filename: "http://localhost:5000/"; Flags: postinstall shellexec unchecked; Description: "Open {#AppName} in browser"
+Filename: "notepad"; Parameters: "{app}\{#AppName}\nzbtomedia\autoProcessMedia.cfg.spec"; Flags: postinstall shellexec; Description: "Open NzbToMedia config file SAVE IT AS autoProcessMedia.cfg"
+Filename: "http://127.0.0.1:5000/"; Flags: postinstall shellexec unchecked; Description: "Open {#AppName} in browser"
 
 [UninstallRun]
 Filename: "{app}\Installer\nssm.exe"; Parameters: "remove ""{#AppServiceName}"" confirm"; Flags: runhidden
@@ -331,7 +331,7 @@ begin
   Exec(Nssm, ExpandConstant('set "{#AppServiceName}" AppStopMethodSkip 6'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
   Exec(Nssm, ExpandConstant('set "{#AppServiceName}" AppStopMethodConsole 20000'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
   Exec(Nssm, ExpandConstant('set "{#AppServiceName}" AppRestartDelay 2000'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
-  Exec(Nssm, ExpandConstant('set "{#AppServiceName}" AppEnvironmentExtra "PATH={app}\Git\cmd;%PATH%"'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
+  Exec(Nssm, ExpandConstant('set "{#AppServiceName}" AppEnvironmentExtra "PATH={app}\Git\cmd;%PATH%" "PATH={app}\Python;%PATH%"'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode)
 
   WizardForm.StatusLabel.Caption := OldProgressString;
 end;
