@@ -17,7 +17,6 @@
 #define AppRepoUrl "https://github.com/piejanssens/premiumizer.git"
 #define nzbtomediaRepoUrl "https://github.com/clinton-hall/nzbToMedia.git"
 
-
 [Setup]
 AppId={#AppId}
 AppName={#AppName}
@@ -33,12 +32,11 @@ AllowNoIcons=yes
 ArchitecturesInstallIn64BitMode=x64
 UninstallDisplayIcon={app}\Installer\prem.ico
 OutputBaseFilename={#AppName}Installer
-Compression=lzma2/max
-SolidCompression=Yes
 UninstallFilesDir={app}\Installer
-ExtraDiskSpaceRequired=314572800
+ExtraDiskSpaceRequired=341479424
 SetupIconFile=assets\prem.ico
-
+InternalCompressLevel=max
+SolidCompression=True
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -47,6 +45,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Source: "utils\unzip.exe"; Flags: dontcopy
 Source: "utils\get-pip.py"; Flags: dontcopy
 Source: "utils\pywin32-220.win32-py2.7.exe"; Flags: dontcopy
+Source: "utils\VCForPython27.msi"; Flags: dontcopy
 Source: "assets\github.ico"; DestDir: "{app}\Installer"
 Source: "assets\prem.ico"; DestDir: "{app}\Installer"
 Source: "utils\nssm32.exe"; DestDir: "{app}\Installer"; DestName: "nssm.exe"; Check: not Is64BitInstallMode
@@ -61,6 +60,7 @@ Name: "{#ServiceStopIcon}"; Filename: "{app}\Installer\nssm.exe"; Parameters: "s
 Name: "{group}\Edit {#AppName} Service"; Filename: "{app}\Installer\nssm.exe"; Parameters: "edit ""{#AppServiceName}"""; AfterInstall: ModifyServiceLinks; Flags: excludefromshowinnewinstall
 
 [Run]
+Filename: "msiexec.exe"; Parameters: "/i ""{tmp}\VCForPython27.msi"" /q"; StatusMsg: "Installing Microsoft Visual C++ Compiler..."
 Filename: "{app}\Git\cmd\git.exe"; Parameters: "clone {#AppRepoUrl} {app}\{#AppName}"; StatusMsg: "Installing {#AppName}..."
 Filename: "{app}\Git\cmd\git.exe"; Parameters: "clone {#NzbToMediaRepoUrl} {app}\{#AppName}\nzbtomedia"; StatusMsg: "Installing NzbTomedia..."
 Filename: "{app}\Python\Python.exe"; Parameters: "{tmp}\get-pip.py"; StatusMsg: "Installing pip..."
@@ -382,6 +382,7 @@ begin
   CleanPython();
   ExtractTemporaryFile('get-pip.py');
   ExtractTemporaryFile('pywin32-220.win32-py2.7.exe');
+  ExtractTemporaryFile('VCForPython27.msi');
   InstallDepPage.SetProgress(InstallDepPage.ProgressBar.Position+1, InstallDepPage.ProgressBar.Max)
 end;
 
