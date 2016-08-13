@@ -1,6 +1,6 @@
 #include <.\idp\idp.iss>
 
-#define PremiumizerInstallerVersion "v0.2"
+#define PremiumizerInstallerVersion "v0.3"
 
 #define AppId "{{9D9946EA-5EDE-462C-A42A-9A511E26CE7B}"
 #define AppName "Premiumizer"
@@ -12,7 +12,7 @@
 #define ServiceStartIcon "{group}\Start " + AppName + " Service"
 #define ServiceStopIcon "{group}\Stop " + AppName + " Service"
 
-#define InstallerVersion 1001
+#define InstallerVersion 1003
 #define InstallerSeedUrl "https://raw.github.com/neox387/PremiumizerInstaller/master/seed.ini"
 #define AppRepoUrl "https://github.com/piejanssens/premiumizer.git"
 #define nzbtomediaRepoUrl "https://github.com/clinton-hall/nzbToMedia.git"
