@@ -37,6 +37,7 @@ ExtraDiskSpaceRequired=341479424
 SetupIconFile=assets\prem.ico
 InternalCompressLevel=max
 SolidCompression=True
+SetupLogging=yes
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -78,6 +79,7 @@ Filename: "{app}\Installer\nssm.exe"; Parameters: "remove ""{#AppServiceName}"" 
 Type: filesandordirs; Name: "{app}\Python"
 Type: filesandordirs; Name: "{app}\Git"
 Type: filesandordirs; Name: "{app}\{#AppName}"
+Type: filesandordirs; Name: "{app}\Installer"
 Type: dirifempty; Name: "{app}"
 
 [Messages]
@@ -545,4 +547,73 @@ begin
   if CurStep = ssInstall then begin
     InstallDependencies()
   end;
+end;
+
+function GetAppID():string;
+begin
+  result := ExpandConstant('{#SetupSetting("AppID")}');     
+end;
+
+function GetAppUninstallRegKey():string;
+begin
+  result := ExpandConstant('Software\Microsoft\Windows\CurrentVersion\Uninstall\' + GetAppID + '_is1'); //Get the Uninstall search path from the Registry
+end;
+
+function IsAppInstalled():boolean;
+var Key : string;          //Registry path to details about the current installation (uninstall info)
+begin                            
+  Key := GetAppUninstallRegKey;
+  result := RegValueExists(HKEY_LOCAL_MACHINE, Key, 'UninstallString');
+end;
+
+//Return the install path used by the existing installation.
+function GetInstalledPath():string;
+var Key : string;
+begin
+  Key := GetAppUninstallRegKey;
+  RegQueryStringValue(HKEY_LOCAL_MACHINE, Key, 'InstallLocation', result);
+end;
+
+function MoveLogfileToLogDir():boolean;
+var
+  logfilepathname, logfilename, newfilepathname: string;
+begin
+  logfilepathname := expandconstant('{log}');
+
+  //If logfile is disabled then logfilepathname is empty
+  if logfilepathname = '' then begin
+     result := false;
+     exit;
+  end;
+
+  logfilename := ExtractFileName(logfilepathname);
+  try
+    //Get the install path by first checking for existing installation thereafter by GUI settings
+    if IsAppInstalled then
+       newfilepathname := GetInstalledPath + '\Installer\'
+    else
+       newfilepathname := expandconstant('{app}\Installer\');
+  except
+    //This exception is raised if {app} is invalid i.e. if canceled is pressed on the Welcome page
+        try
+          newfilepathname := WizardDirValue + '\Installer\'; 
+        except
+          //This exception is raised if WizardDirValue i s invalid i.e. if canceled is pressed on the Mutex check message dialog.
+          result := false;
+        end;
+  end;  
+  result := ForceDirectories(newfilepathname); //Make sure the destination path exists.
+  newfilepathname := newfilepathname + logfilename; //Add filename
+
+  //if copy successful then delete logfilepathname 
+  result := filecopy(logfilepathname, newfilepathname, false);
+
+  if result then
+     result := DeleteFile(logfilepathname);
+end;
+
+//Called just before Setup terminates. Note that this function is called even if the user exits Setup before anything is installed.
+procedure DeinitializeSetup();
+begin
+  MoveLogfileToLogDir;
 end;
