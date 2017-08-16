@@ -240,9 +240,9 @@ begin
   CheckInstallerVersion(SeedFile)
 
   if Is64BitInstallMode then
-    Arch := 'x86'
+    Arch := 'x64'
   else
-    Arch := 'x86';
+    Arch := 'x64';
 
   ParseDependency(PythonDep,    'Python.'    + Arch, SeedFile)
   ParseDependency(GitDep,       'Git.'       + Arch, SeedFile)
