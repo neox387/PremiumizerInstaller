@@ -231,7 +231,6 @@ end;
 procedure ParseSeedFile();
 var
   SeedFile: String;
-  Arch: String;
   DownloadPage: TWizardPage;
 begin
   SeedFile := ExpandConstant('{tmp}\installer.ini')
@@ -239,13 +238,8 @@ begin
   // Make sure we're running the latest version of the installer
   CheckInstallerVersion(SeedFile)
 
-  if Is64BitInstallMode then
-    Arch := 'x64'
-  else
-    Arch := 'x64';
-
-  ParseDependency(PythonDep,    'Python.'    + Arch, SeedFile)
-  ParseDependency(GitDep,       'Git.'       + Arch, SeedFile)
+  ParseDependency(PythonDep,    'Python.x64'    , SeedFile)
+  ParseDependency(GitDep,       'Git.x64'       , SeedFile)
 
   DependencyDownloadPageId := idpCreateDownloadForm(wpPreparing)
   DownloadPage := PageFromID(DependencyDownloadPageId)
