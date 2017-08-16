@@ -393,7 +393,7 @@ var
   ResultCode: Integer;
 begin
   InstallDepPage.SetText('Installing Git...', '')
-  Exec(ExpandConstantEx('{tmp}\{filename}', 'filename', GitDep.Filename), ExpandConstant('-InstallPath="{app}\Git" -y -gm2'), '', SW_SHOW, ewWaitUntilTerminated, ResultCode)
+  Exec(ExpandConstantEx('{tmp}\{filename}', 'filename', GitDep.Filename), ExpandConstant('/DIR="{app}\Git" -VERYSILENT'), '', SW_SHOW, ewWaitUntilTerminated, ResultCode)
   InstallDepPage.SetProgress(InstallDepPage.ProgressBar.Position+1, InstallDepPage.ProgressBar.Max)
 end;
 
