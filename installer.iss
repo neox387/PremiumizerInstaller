@@ -387,7 +387,7 @@ var
   ResultCode: Integer;
 begin
   InstallDepPage.SetText('Installing Git...', '')
-  Exec(ExpandConstantEx('{tmp}\{filename}', 'filename', GitDep.Filename), ExpandConstant('/DIR="{app}\Git" -VERYSILENT'), '', SW_SHOW, ewWaitUntilTerminated, ResultCode)
+  Exec(ExpandConstantEx('{tmp}\{filename}', 'filename', GitDep.Filename), ExpandConstant('/DIR="{app}\Git" /VERYSILENT'), '', SW_SHOW, ewWaitUntilTerminated, ResultCode)
   InstallDepPage.SetProgress(InstallDepPage.ProgressBar.Position+1, InstallDepPage.ProgressBar.Max)
 end;
 
@@ -423,12 +423,8 @@ begin
   try
     InstallDepPage.Show
     InstallDepPage.SetProgress(0, 6)
-    if VerifyDependencies() then begin
-      InstallPython()
-      InstallGit()
-    end else begin
-      ErrorMessage := 'There was an error installing the required dependencies.'
-    end;
+     InstallPython()
+     InstallGit()
   finally
     InstallDepPage.Hide
   end;
