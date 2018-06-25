@@ -1,6 +1,6 @@
 #include <.\idp\idp.iss>
 
-#define PremiumizerInstallerVersion "v0.4"
+#define PremiumizerInstallerVersion "v0.5"
 
 #define AppId "{{9D9946EA-5EDE-462C-A42A-9A511E26CE7B}"
 #define AppName "Premiumizer"
@@ -12,7 +12,7 @@
 #define ServiceStartIcon "{group}\Start " + AppName + " Service"
 #define ServiceStopIcon "{group}\Stop " + AppName + " Service"
 
-#define InstallerVersion 1004
+#define InstallerVersion 1005
 #define InstallerSeedUrl "https://raw.github.com/neox387/PremiumizerInstaller/master/seed.ini"
 #define AppRepoUrl "https://github.com/piejanssens/premiumizer.git"
 #define nzbtomediaRepoUrl "https://github.com/clinton-hall/nzbToMedia.git"
@@ -45,12 +45,11 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "utils\unzip.exe"; Flags: dontcopy
 Source: "utils\get-pip.py"; Flags: dontcopy
-Source: "utils\pywin32-221.win-amd64-py2.7.exe"; Flags: dontcopy
+Source: "utils\pywin32-223.win-amd64-py2.7.exe"; Flags: dontcopy
 Source: "utils\VCForPython27.msi"; Flags: dontcopy
 Source: "assets\github.ico"; DestDir: "{app}\Installer"
 Source: "assets\prem.ico"; DestDir: "{app}\Installer"
-Source: "utils\nssm32.exe"; DestDir: "{app}\Installer"; DestName: "nssm.exe"; Check: not Is64BitInstallMode
-Source: "utils\nssm64.exe"; DestDir: "{app}\Installer"; DestName: "nssm.exe"; Check: Is64BitInstallMode
+Source: "utils\nssm64.exe"; DestDir: "{app}\Installer"; DestName: "nssm.exe"
 
 [Icons]
 Name: "{group}\{#AppName}"; Filename: "http://127.0.0.1:5000/"; IconFilename: "{app}\Installer\prem.ico"
@@ -65,7 +64,7 @@ Filename: "msiexec.exe"; Parameters: "/i ""{tmp}\VCForPython27.msi"" /q"; Status
 Filename: "{app}\Git\cmd\git.exe"; Parameters: "clone {#AppRepoUrl} {app}\{#AppName}"; StatusMsg: "Installing {#AppName}..."
 Filename: "{app}\Git\cmd\git.exe"; Parameters: "clone {#NzbToMediaRepoUrl} {app}\{#AppName}\nzbtomedia"; StatusMsg: "Installing NzbTomedia..."
 Filename: "{app}\Python\Python.exe"; Parameters: "{tmp}\get-pip.py"; StatusMsg: "Installing pip..."
-Filename: "{app}\Python\Scripts\easy_install.exe"; Parameters: "{tmp}\pywin32-221.win-amd64-py2.7.exe"; StatusMsg: "Installing Pywin32..."
+Filename: "{app}\Python\Scripts\easy_install.exe"; Parameters: "{tmp}\pywin32-223.win-amd64-py2.7.exe"; StatusMsg: "Installing Pywin32..."
 Filename: "{app}\Python\Scripts\pip2.7.exe"; Parameters: "install -r {app}\{#AppName}\requirements.txt"; StatusMsg: "Installing Premiumizer dependencies"
 Filename: "{app}\Installer\nssm.exe"; Parameters: "start ""{#AppServiceName}"""; Flags: runhidden; BeforeInstall: CreateService; StatusMsg: "Starting {#AppName} service..."
 Filename: "{sys}\services.msc"; WorkingDir: {sys}; Flags: shellexec postinstall; Description: "Open Services.msc to change user log on for Premiumizer to your account"
@@ -377,7 +376,7 @@ begin
   Exec('msiexec.exe', ExpandConstantEx('/A "{tmp}\{filename}" /QN TARGETDIR="{app}\Python"', 'filename', PythonDep.Filename), '', SW_SHOW, ewWaitUntilTerminated, ResultCode)
   CleanPython();
   ExtractTemporaryFile('get-pip.py');
-  ExtractTemporaryFile('pywin32-221.win-amd64-py2.7.exe');
+  ExtractTemporaryFile('pywin32-223.win-amd64-py2.7.exe');
   ExtractTemporaryFile('VCForPython27.msi');
   InstallDepPage.SetProgress(InstallDepPage.ProgressBar.Position+1, InstallDepPage.ProgressBar.Max)
 end;
