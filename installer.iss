@@ -1,6 +1,6 @@
 #include <.\idp\idp.iss>
 
-#define PremiumizerInstallerVersion "v0.6"
+#define PremiumizerInstallerVersion "v0.7"
 
 #define AppId "{{9D9946EA-5EDE-462C-A42A-9A511E26CE7B}"
 #define AppName "Premiumizer"
@@ -12,7 +12,7 @@
 #define ServiceStartIcon "{group}\Start " + AppName + " Service"
 #define ServiceStopIcon "{group}\Stop " + AppName + " Service"
 
-#define InstallerVersion 1006
+#define InstallerVersion 1007
 #define InstallerSeedUrl "https://raw.github.com/neox387/PremiumizerInstaller/master/seed.ini"
 #define AppRepoUrl "https://github.com/piejanssens/premiumizer.git"
 #define nzbtomediaRepoUrl "https://github.com/clinton-hall/nzbToMedia.git"
@@ -43,10 +43,7 @@ SetupLogging=yes
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "utils\unzip.exe"; Flags: dontcopy
 Source: "utils\get-pip.py"; Flags: dontcopy
-Source: "utils\pywin32-224.win-amd64-py2.7.exe"; Flags: dontcopy
-Source: "utils\VCForPython27.msi"; Flags: dontcopy
 Source: "assets\github.ico"; DestDir: "{app}\Installer"
 Source: "assets\prem.ico"; DestDir: "{app}\Installer"
 Source: "utils\nssm64.exe"; DestDir: "{app}\Installer"; DestName: "nssm.exe"
@@ -60,12 +57,10 @@ Name: "{#ServiceStopIcon}"; Filename: "{app}\Installer\nssm.exe"; Parameters: "s
 Name: "{group}\Edit {#AppName} Service"; Filename: "{app}\Installer\nssm.exe"; Parameters: "edit ""{#AppServiceName}"""; AfterInstall: ModifyServiceLinks; Flags: excludefromshowinnewinstall
 
 [Run]
-Filename: "msiexec.exe"; Parameters: "/i ""{tmp}\VCForPython27.msi"" /q"; StatusMsg: "Installing Microsoft Visual C++ Compiler..."
 Filename: "{app}\Git\cmd\git.exe"; Parameters: "clone {#AppRepoUrl} {app}\{#AppName}"; StatusMsg: "Installing {#AppName}..."
 Filename: "{app}\Git\cmd\git.exe"; Parameters: "clone {#NzbToMediaRepoUrl} {app}\{#AppName}\nzbtomedia"; StatusMsg: "Installing NzbTomedia..."
 Filename: "{app}\Python\Python.exe"; Parameters: "{tmp}\get-pip.py"; StatusMsg: "Installing pip..."
-Filename: "{app}\Python\Scripts\easy_install.exe"; Parameters: "{tmp}\pywin32-224.win-amd64-py2.7.exe"; StatusMsg: "Installing Pywin32..."
-Filename: "{app}\Python\Scripts\pip2.7.exe"; Parameters: "install -r {app}\{#AppName}\requirements.txt"; StatusMsg: "Installing Premiumizer dependencies"
+Filename: "{app}\Python\Scripts\pip3.exe"; Parameters: "install -r {app}\{#AppName}\requirements.txt"; StatusMsg: "Installing Premiumizer dependencies"
 Filename: "{app}\Installer\nssm.exe"; Parameters: "start ""{#AppServiceName}"""; Flags: runhidden; BeforeInstall: CreateService; StatusMsg: "Starting {#AppName} service..."
 Filename: "{sys}\services.msc"; WorkingDir: {sys}; Flags: shellexec postinstall; Description: "Open Services.msc to change user log on for Premiumizer to your account"
 Filename: "notepad"; Parameters: "{app}\{#AppName}\nzbtomedia\autoProcessMedia.cfg.spec"; Flags: postinstall shellexec; Description: "Open NzbToMedia config file SAVE IT AS autoProcessMedia.cfg"
@@ -373,11 +368,9 @@ var
   ResultCode: Integer;
 begin
   InstallDepPage.SetText('Installing Python...', '')
-  Exec('msiexec.exe', ExpandConstantEx('/A "{tmp}\{filename}" /QN TARGETDIR="{app}\Python"', 'filename', PythonDep.Filename), '', SW_SHOW, ewWaitUntilTerminated, ResultCode)
+  Exec(ExpandConstantEx('{tmp}\{filename}', 'filename', PythonDep.Filename), ExpandConstant('TargetDir="{app}\Python" /quiet'), '', SW_SHOW, ewWaitUntilTerminated, ResultCode)
   CleanPython();
   ExtractTemporaryFile('get-pip.py');
-  ExtractTemporaryFile('pywin32-224.win-amd64-py2.7.exe');
-  ExtractTemporaryFile('VCForPython27.msi');
   InstallDepPage.SetProgress(InstallDepPage.ProgressBar.Position+1, InstallDepPage.ProgressBar.Max)
 end;
 
