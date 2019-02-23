@@ -44,6 +44,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "utils\get-pip.py"; Flags: dontcopy
+Source: "utils\pywin32-224.win-amd64-py3.7.exe"; Flags: dontcopy
 Source: "assets\github.ico"; DestDir: "{app}\Installer"
 Source: "assets\prem.ico"; DestDir: "{app}\Installer"
 Source: "utils\nssm64.exe"; DestDir: "{app}\Installer"; DestName: "nssm.exe"
@@ -60,6 +61,7 @@ Name: "{group}\Edit {#AppName} Service"; Filename: "{app}\Installer\nssm.exe"; P
 Filename: "{app}\Git\cmd\git.exe"; Parameters: "clone {#AppRepoUrl} {app}\{#AppName}"; StatusMsg: "Installing {#AppName}..."
 Filename: "{app}\Git\cmd\git.exe"; Parameters: "clone {#NzbToMediaRepoUrl} {app}\{#AppName}\nzbtomedia"; StatusMsg: "Installing NzbTomedia..."
 Filename: "{app}\Python\Python.exe"; Parameters: "{tmp}\get-pip.py"; StatusMsg: "Installing pip..."
+Filename: "{app}\Python\Scripts\easy_install.exe"; Parameters: "{tmp}\pywin32-224.win-amd64-py3.7.exe"; StatusMsg: "Installing Pywin32..."
 Filename: "{app}\Python\Scripts\pip3.exe"; Parameters: "install -r {app}\{#AppName}\requirements.txt"; StatusMsg: "Installing Premiumizer dependencies"
 Filename: "{app}\Installer\nssm.exe"; Parameters: "start ""{#AppServiceName}"""; Flags: runhidden; BeforeInstall: CreateService; StatusMsg: "Starting {#AppName} service..."
 Filename: "{sys}\services.msc"; WorkingDir: {sys}; Flags: shellexec postinstall; Description: "Open Services.msc to change user log on for Premiumizer to your account"
@@ -371,6 +373,7 @@ begin
   Exec(ExpandConstantEx('{tmp}\{filename}', 'filename', PythonDep.Filename), ExpandConstant('TargetDir="{app}\Python" /quiet'), '', SW_SHOW, ewWaitUntilTerminated, ResultCode)
   CleanPython();
   ExtractTemporaryFile('get-pip.py');
+  ExtractTemporaryFile('pywin32-224.win-amd64-py3.7.exe');
   InstallDepPage.SetProgress(InstallDepPage.ProgressBar.Position+1, InstallDepPage.ProgressBar.Max)
 end;
 
