@@ -1,6 +1,6 @@
 #include <.\idp\idp.iss>
 
-#define PremiumizerInstallerVersion "v0.7"
+#define PremiumizerInstallerVersion "v0.8"
 
 #define AppId "{{9D9946EA-5EDE-462C-A42A-9A511E26CE7B}"
 #define AppName "Premiumizer"
@@ -12,7 +12,7 @@
 #define ServiceStartIcon "{group}\Start " + AppName + " Service"
 #define ServiceStopIcon "{group}\Stop " + AppName + " Service"
 
-#define InstallerVersion 1007
+#define InstallerVersion 1008
 #define InstallerSeedUrl "https://raw.github.com/neox387/PremiumizerInstaller/master/seed.ini"
 #define AppRepoUrl "https://github.com/piejanssens/premiumizer.git"
 #define nzbtomediaRepoUrl "https://github.com/clinton-hall/nzbToMedia.git"
@@ -370,7 +370,7 @@ var
   ResultCode: Integer;
 begin
   InstallDepPage.SetText('Installing Python...', '')
-  Exec(ExpandConstantEx('{tmp}\{filename}', 'filename', PythonDep.Filename), ExpandConstant('TargetDir="{app}\Python" /quiet'), '', SW_SHOW, ewWaitUntilTerminated, ResultCode)
+  Exec(ExpandConstantEx('{tmp}\{filename}', 'filename', PythonDep.Filename), ExpandConstant('TargetDir="{app}\Python" /quiet Include_launcher=0 Include_test=0'), '', SW_SHOW, ewWaitUntilTerminated, ResultCode)
   CleanPython();
   ExtractTemporaryFile('get-pip.py');
   ExtractTemporaryFile('pywin32-224.win-amd64-py3.7.exe');
