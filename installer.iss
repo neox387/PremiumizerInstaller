@@ -1,8 +1,7 @@
 #include <.\idp\idp.iss>
 
-#define PremiumizerInstallerVersion "v0.9"
-
-#define AppId "{{9D9946EA-5EDE-462C-A42A-9A511E26CE7B}"
+#define PremiumizerInstallerVersion "v1.0"
+#define AppId "{{26BFCD27-29AC-4FB0-B0A2-5484E0CDAB5B}"
 #define AppName "Premiumizer"
 #define AppVersion "master"
 #define AppPublisher "Premiumizer"
@@ -12,8 +11,8 @@
 #define ServiceStartIcon "{group}\Start " + AppName + " Service"
 #define ServiceStopIcon "{group}\Stop " + AppName + " Service"
 
-#define InstallerVersion 1009
-#define InstallerSeedUrl "https://raw.github.com/neox387/PremiumizerInstaller/master/seed.ini"
+#define InstallerVersion 1010
+#define InstallerSeedUrl "https://raw.github.com/piejanssens/PremiumizerInstaller/master/seed.ini"
 #define AppRepoUrl "https://github.com/piejanssens/premiumizer.git"
 #define nzbtomediaRepoUrl "https://github.com/clinton-hall/nzbToMedia.git"
 
@@ -45,6 +44,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "utils\get-pip.py"; Flags: dontcopy
 Source: "utils\pywin32-227.win-amd64-py3.8.exe"; Flags: dontcopy
+Source: "utils\VC_redist.x64.exe"; Flags: dontcopy
 Source: "assets\github.ico"; DestDir: "{app}\Installer"
 Source: "assets\prem.ico"; DestDir: "{app}\Installer"
 Source: "utils\nssm64.exe"; DestDir: "{app}\Installer"; DestName: "nssm.exe"
@@ -62,6 +62,7 @@ Filename: "{app}\Git\cmd\git.exe"; Parameters: "clone {#AppRepoUrl} {app}\{#AppN
 Filename: "{app}\Git\cmd\git.exe"; Parameters: "clone {#NzbToMediaRepoUrl} {app}\{#AppName}\nzbtomedia"; StatusMsg: "Installing NzbTomedia..."
 Filename: "{app}\Python\Python.exe"; Parameters: "{tmp}\get-pip.py"; StatusMsg: "Installing pip..."
 Filename: "{app}\Python\Scripts\easy_install.exe"; Parameters: "{tmp}\pywin32-227.win-amd64-py3.8.exe"; StatusMsg: "Installing Pywin32..."
+Filename: "{tmp}\VC_redist.x64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing Visual C++..."
 Filename: "{app}\Python\Scripts\pip3.exe"; Parameters: "install -r {app}\{#AppName}\requirements.txt"; StatusMsg: "Installing Premiumizer dependencies"
 Filename: "{app}\Installer\nssm.exe"; Parameters: "start ""{#AppServiceName}"""; Flags: runhidden; BeforeInstall: CreateService; StatusMsg: "Starting {#AppName} service..."
 Filename: "{sys}\services.msc"; WorkingDir: {sys}; Flags: shellexec postinstall; Description: "Open Services.msc to change user log on for Premiumizer to your account"
@@ -79,7 +80,7 @@ Type: filesandordirs; Name: "{app}\Installer"
 Type: dirifempty; Name: "{app}"
 
 [Messages]
-WelcomeLabel2=This will install [name/ver] on your computer.%n%nYou will need Internet connectivity in order to download the required packages.%n%nNOTE: This installer intentionally ignores any existing installations of Git or Python you might already have installed on your system. If you would prefer to use those versions, we recommend installing [name] manually.
+WelcomeLabel2=This will install [name/ver] on your computer.%n%nYou will need Internet connectivity in order to download the required packages.
 AboutSetupNote=PremiumizerInstaller {#PremiumizerInstallerVersion}
 BeveledLabel=PremiumizerInstaller {#PremiumizerInstallerVersion}
 
@@ -374,6 +375,7 @@ begin
   CleanPython();
   ExtractTemporaryFile('get-pip.py');
   ExtractTemporaryFile('pywin32-227.win-amd64-py3.8.exe');
+  ExtractTemporaryFile('VC_redist.x64.exe');
   InstallDepPage.SetProgress(InstallDepPage.ProgressBar.Position+1, InstallDepPage.ProgressBar.Max)
 end;
 
