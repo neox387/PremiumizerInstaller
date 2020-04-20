@@ -12,7 +12,7 @@
 #define ServiceStopIcon "{group}\Stop " + AppName + " Service"
 
 #define InstallerVersion 1010
-#define InstallerSeedUrl "https://raw.github.com/piejanssens/PremiumizerInstaller/master/seed.ini"
+#define InstallerSeedUrl "https://raw.github.com/neox387/PremiumizerInstaller/master/seed.ini"
 #define AppRepoUrl "https://github.com/piejanssens/premiumizer.git"
 #define nzbtomediaRepoUrl "https://github.com/clinton-hall/nzbToMedia.git"
 
