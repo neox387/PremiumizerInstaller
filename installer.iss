@@ -1,6 +1,6 @@
 #include <.\idp\idp.iss>
 
-#define PremiumizerInstallerVersion "v1.1"
+#define PremiumizerInstallerVersion "v1.2"
 #define AppId "{{26BFCD27-29AC-4FB0-B0A2-5484E0CDAB5B}"
 #define AppName "Premiumizer"
 #define AppVersion "master"
@@ -11,7 +11,7 @@
 #define ServiceStartIcon "{group}\Start " + AppName + " Service"
 #define ServiceStopIcon "{group}\Stop " + AppName + " Service"
 
-#define InstallerVersion 1011
+#define InstallerVersion 1020
 #define InstallerSeedUrl "https://raw.github.com/neox387/PremiumizerInstaller/master/seed.ini"
 #define AppRepoUrl "https://github.com/piejanssens/premiumizer.git"
 #define nzbtomediaRepoUrl "https://github.com/clinton-hall/nzbToMedia.git"
@@ -42,9 +42,6 @@ SetupLogging=yes
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "utils\get-pip.py"; Flags: dontcopy
-Source: "utils\pywin32-300.win-amd64-py3.9.exe"; Flags: dontcopy
-Source: "utils\VC_redist.x64.exe"; Flags: dontcopy
 Source: "assets\github.ico"; DestDir: "{app}\Installer"
 Source: "assets\prem.ico"; DestDir: "{app}\Installer"
 Source: "utils\nssm64.exe"; DestDir: "{app}\Installer"; DestName: "nssm.exe"
@@ -60,10 +57,9 @@ Name: "{group}\Edit {#AppName} Service"; Filename: "{app}\Installer\nssm.exe"; P
 [Run]
 Filename: "{app}\Git\cmd\git.exe"; Parameters: "clone {#AppRepoUrl} {app}\{#AppName}"; StatusMsg: "Installing {#AppName}..."
 Filename: "{app}\Git\cmd\git.exe"; Parameters: "clone {#NzbToMediaRepoUrl} {app}\{#AppName}\nzbtomedia"; StatusMsg: "Installing NzbTomedia..."
-Filename: "{app}\Python\Python.exe"; Parameters: "{tmp}\get-pip.py"; StatusMsg: "Installing pip..."
-Filename: "{app}\Python\Scripts\easy_install.exe"; Parameters: "{tmp}\pywin32-300.win-amd64-py3.9.exe"; StatusMsg: "Installing Pywin32..."
-Filename: "{tmp}\VC_redist.x64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing Visual C++..."
-Filename: "{app}\Python\Scripts\pip3.exe"; Parameters: "install -r {app}\{#AppName}\requirements.txt"; StatusMsg: "Installing Premiumizer dependencies"
+Filename: "{app}\Python\Scripts\pip.exe"; Parameters: "install --upgrade pip"; StatusMsg: "Upgrading pip..."
+Filename: "{app}\Python\Scripts\pip.exe"; Parameters: "install pywin32"; StatusMsg: "Installing Pywin32..."
+Filename: "{app}\Python\Scripts\pip.exe"; Parameters: "install -r {app}\{#AppName}\requirements.txt"; StatusMsg: "Installing Premiumizer dependencies"
 Filename: "{app}\Installer\nssm.exe"; Parameters: "start ""{#AppServiceName}"""; Flags: runhidden; BeforeInstall: CreateService; StatusMsg: "Starting {#AppName} service..."
 Filename: "{sys}\services.msc"; WorkingDir: {sys}; Flags: shellexec postinstall; Description: "Open Services.msc to change user log on for Premiumizer to your account"
 Filename: "notepad"; Parameters: "{app}\{#AppName}\nzbtomedia\autoProcessMedia.cfg.spec"; Flags: postinstall shellexec; Description: "Open NzbToMedia config file SAVE IT AS autoProcessMedia.cfg"
@@ -73,8 +69,6 @@ Filename: "http://127.0.0.1:5000/"; Flags: postinstall shellexec unchecked; Desc
 Filename: "{app}\Installer\nssm.exe"; Parameters: "remove ""{#AppServiceName}"" confirm"; Flags: runhidden
 
 [UninstallDelete]
-Type: filesandordirs; Name: "{app}\Python"
-Type: filesandordirs; Name: "{app}\Git"
 Type: filesandordirs; Name: "{app}\{#AppName}"
 Type: filesandordirs; Name: "{app}\Installer"
 Type: dirifempty; Name: "{app}"
@@ -373,9 +367,6 @@ begin
   InstallDepPage.SetText('Installing Python...', '')
   Exec(ExpandConstantEx('{tmp}\{filename}', 'filename', PythonDep.Filename), ExpandConstant('TargetDir="{app}\Python" /quiet Include_launcher=0 Include_test=0'), '', SW_SHOW, ewWaitUntilTerminated, ResultCode)
   CleanPython();
-  ExtractTemporaryFile('get-pip.py');
-  ExtractTemporaryFile('pywin32-300.win-amd64-py3.9.exe');
-  ExtractTemporaryFile('VC_redist.x64.exe');
   InstallDepPage.SetProgress(InstallDepPage.ProgressBar.Position+1, InstallDepPage.ProgressBar.Max)
 end;
 
