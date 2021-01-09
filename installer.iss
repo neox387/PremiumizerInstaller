@@ -57,9 +57,9 @@ Name: "{group}\Edit {#AppName} Service"; Filename: "{app}\Installer\nssm.exe"; P
 [Run]
 Filename: "{app}\Git\cmd\git.exe"; Parameters: "clone {#AppRepoUrl} {app}\{#AppName}"; StatusMsg: "Installing {#AppName}..."
 Filename: "{app}\Git\cmd\git.exe"; Parameters: "clone {#NzbToMediaRepoUrl} {app}\{#AppName}\nzbtomedia"; StatusMsg: "Installing NzbTomedia..."
-Filename: "{app}\Python\Scripts\pip.exe"; Parameters: "install --upgrade pip"; StatusMsg: "Upgrading pip..."
-Filename: "{app}\Python\Scripts\pip.exe"; Parameters: "install pywin32"; StatusMsg: "Installing Pywin32..."
-Filename: "{app}\Python\Scripts\pip.exe"; Parameters: "install -r {app}\{#AppName}\requirements.txt"; StatusMsg: "Installing Premiumizer dependencies"
+Filename: "{app}\Python\python.exe"; Parameters: "-m pip install --upgrade pip"; StatusMsg: "Upgrading pip..."
+Filename: "{app}\Python\python.exe"; Parameters: "-m pip install pywin32"; StatusMsg: "Installing Pywin32..."
+Filename: "{app}\Python\python.exe"; Parameters: "-m pip install -r {app}\{#AppName}\requirements.txt"; StatusMsg: "Installing Premiumizer dependencies"
 Filename: "{app}\Installer\nssm.exe"; Parameters: "start ""{#AppServiceName}"""; Flags: runhidden; BeforeInstall: CreateService; StatusMsg: "Starting {#AppName} service..."
 Filename: "{sys}\services.msc"; WorkingDir: {sys}; Flags: shellexec postinstall; Description: "Open Services.msc to change user log on for Premiumizer to your account"
 Filename: "notepad"; Parameters: "{app}\{#AppName}\nzbtomedia\autoProcessMedia.cfg.spec"; Flags: postinstall shellexec; Description: "Open NzbToMedia config file SAVE IT AS autoProcessMedia.cfg"
