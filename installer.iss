@@ -1,6 +1,6 @@
 #include <.\idp\idp.iss>
 
-#define PremiumizerInstallerVersion "v1.2"
+#define PremiumizerInstallerVersion "v1.3"
 #define AppId "{{26BFCD27-29AC-4FB0-B0A2-5484E0CDAB5B}"
 #define AppName "Premiumizer"
 #define AppVersion "master"
@@ -11,7 +11,7 @@
 #define ServiceStartIcon "{group}\Start " + AppName + " Service"
 #define ServiceStopIcon "{group}\Stop " + AppName + " Service"
 
-#define InstallerVersion 1020
+#define InstallerVersion 1030
 #define InstallerSeedUrl "https://raw.github.com/neox387/PremiumizerInstaller/master/seed.ini"
 #define AppRepoUrl "https://github.com/piejanssens/premiumizer.git"
 #define nzbtomediaRepoUrl "https://github.com/clinton-hall/nzbToMedia.git"
@@ -42,6 +42,7 @@ SetupLogging=yes
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
+Source: "utils\VC_redist.x64.exe"; Flags: dontcopy
 Source: "assets\github.ico"; DestDir: "{app}\Installer"
 Source: "assets\prem.ico"; DestDir: "{app}\Installer"
 Source: "utils\nssm64.exe"; DestDir: "{app}\Installer"; DestName: "nssm.exe"
@@ -57,6 +58,7 @@ Name: "{group}\Edit {#AppName} Service"; Filename: "{app}\Installer\nssm.exe"; P
 [Run]
 Filename: "{app}\Git\cmd\git.exe"; Parameters: "clone {#AppRepoUrl} {app}\{#AppName}"; StatusMsg: "Installing {#AppName}..."
 Filename: "{app}\Git\cmd\git.exe"; Parameters: "clone {#NzbToMediaRepoUrl} {app}\{#AppName}\nzbtomedia"; StatusMsg: "Installing NzbTomedia..."
+Filename: "{tmp}\VC_redist.x64.exe"; Parameters: "/install /quiet /norestart"; StatusMsg: "Installing Visual C++..."
 Filename: "{app}\Python\python.exe"; Parameters: "-m pip install --upgrade pip"; StatusMsg: "Upgrading pip..."
 Filename: "{app}\Python\python.exe"; Parameters: "-m pip install pywin32"; StatusMsg: "Installing Pywin32..."
 Filename: "{app}\Python\python.exe"; Parameters: "-m pip install -r {app}\{#AppName}\requirements.txt"; StatusMsg: "Installing Premiumizer dependencies"
@@ -367,6 +369,7 @@ begin
   InstallDepPage.SetText('Installing Python...', '')
   Exec(ExpandConstantEx('{tmp}\{filename}', 'filename', PythonDep.Filename), ExpandConstant('TargetDir="{app}\Python" /quiet Include_launcher=0 Include_test=0'), '', SW_SHOW, ewWaitUntilTerminated, ResultCode)
   CleanPython();
+  ExtractTemporaryFile('VC_redist.x64.exe');
   InstallDepPage.SetProgress(InstallDepPage.ProgressBar.Position+1, InstallDepPage.ProgressBar.Max)
 end;
 
