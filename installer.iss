@@ -1,19 +1,19 @@
 #include <.\idp\idp.iss>
 
-#define PremiumizerInstallerVersion "v1.3"
+#define PremiumizerInstallerVersion "v1.4"
 #define AppId "{{26BFCD27-29AC-4FB0-B0A2-5484E0CDAB5B}"
 #define AppName "Premiumizer"
 #define AppVersion "master"
 #define AppPublisher "Premiumizer"
-#define AppURL "https://github.com/piejanssens/premiumizer"
+#define AppURL "https://github.com/neox387/premiumizer"
 #define AppServiceName AppName
 #define AppServiceDescription "Cloud Downloader Premiumize.me"
 #define ServiceStartIcon "{group}\Start " + AppName + " Service"
 #define ServiceStopIcon "{group}\Stop " + AppName + " Service"
 
-#define InstallerVersion 1030
+#define InstallerVersion 1040
 #define InstallerSeedUrl "https://raw.github.com/neox387/PremiumizerInstaller/master/seed.ini"
-#define AppRepoUrl "https://github.com/piejanssens/premiumizer.git"
+#define AppRepoUrl "https://github.com/neox387/premiumizer.git"
 #define nzbtomediaRepoUrl "https://github.com/clinton-hall/nzbToMedia.git"
 
 [Setup]
